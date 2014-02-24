@@ -70,7 +70,7 @@ if ($_POST["userId"]) {
 							var text  = button.text();
 							if(text === "Show more") {
 								edmPlugin.readGroup(data._id, function (result) {
-									var fs = result.featureSwitch || {};
+									var fs = result.featureSwitch || "{}";
 									$("<p />").text(fs).appendTo(name);
 									button.text("Show less");
 								});
