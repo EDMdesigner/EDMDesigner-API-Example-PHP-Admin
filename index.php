@@ -151,9 +151,11 @@ if ($_POST["userId"]) {
 
 
 				//USERS
+				var multipleCreateList = [];
 
 				function updateUserList() {
 					$("#NewUser").hide();
+					$("#MultipleNewUser").hide();
 					$("#UpdateUser").hide();
 					$("#GroupStuff").show();
 					$("#UserList").show();
@@ -253,6 +255,29 @@ if ($_POST["userId"]) {
 					return elem;
 				}
 
+				function pushToCreateList(element) {
+					var span = $("#MultipleUsersList");
+					var first = false;
+					if(span.text() === "") {
+						first = true;
+					}
+					var text = "";
+					if(!first) {
+						text += ",<br>";
+					}
+					text += "{id: " + element.id;
+					if(element.email) {
+						text += ", email: " + element.email;
+					}
+					if(element.normalName) {
+						text += ", normalName: " + element.normalName;
+					}
+					text += ", group: " + element.group + "}";
+
+					span.append(text);
+					multipleCreateList.push(element);
+				}
+
 				$("#NewUserButton").click(function() {
 					$("#UserList").hide();
 					$("#NewUser").show();
@@ -291,7 +316,53 @@ if ($_POST["userId"]) {
 					}
 				});
 
+				$("#MultipleNewUserButton").click(function() {
+					$("#UserList").hide();
+					$("#MultipleNewUser").show();
 
+					var groupSelect = $("#MultipleNewUserGroup");
+
+					groupSelect.empty();
+					multipleCreateList = [];
+					$("#MultipleUsersList").empty();
+
+					createOptions(groupSelect);
+				});
+
+				$("#MultipleNewUserAddButton").click(function() {
+					var idInput = $("#MultipleNewUserId"),
+						emailInput = $("#MultipleNewUserEmail"),
+						nameInput = $("#MultipleNewUserName"),
+						groupInput = $("#MultipleNewUserGroup");
+
+
+					if(idInput.val() !== "") {
+						var data = {
+							id: idInput.val(),
+							group: groupInput.val()
+						};
+
+						if(emailInput.val() !== "") {
+							data.email = emailInput.val();
+							emailInput.val("");
+						}
+						if(nameInput.val() !== "") {
+							data.normalName = nameInput.val();
+							nameInput.val("");
+						}
+
+						idInput.val("");
+						pushToCreateList(data);
+					}
+				});
+
+				$("#MultipleCreateUserButton").click(function() {
+					if(multipleCreateList.length > 0) {
+						edmPlugin.createMultipleUser({users: multipleCreateList}, function(err) {
+							updateUserList();
+						})
+					}
+				});
 
 				function readyHandler() {
 					updateGroupList();
@@ -346,12 +417,14 @@ if ($_POST["userId"]) {
 		</div>
 
 		<br>
+		<p>---------------------------------------------------------------------------</p>
 		<br>
 
 		<div id="UserStuff">
 			<div id="UserList">
 
 				<button id="NewUserButton">New user</button>
+				<button id="MultipleNewUserButton">Create multiple users</button>
 				
 				<h2>Users</h2>
 
@@ -375,6 +448,25 @@ if ($_POST["userId"]) {
 				<div>
 					<button id="NewUserAddButton">Add</button>
 				</div>
+			</div>
+
+			<div id="MultipleNewUser">
+				<h2>New User</h2>
+				<h3>UserId*</h3>
+				<input id="MultipleNewUserId"/>
+				<h3>Email</h3>
+				<input id="MultipleNewUserEmail" />
+				<h3>Normal Name</h3>
+				<input id="MultipleNewUserName" />
+				<h3>Group</h3>
+				<select id="MultipleNewUserGroup" >
+				</select>
+				<p>*required</p>
+				<div>
+					<button id="MultipleNewUserAddButton">Add</button>
+					<button id="MultipleCreateUserButton">Create</button>
+				</div>
+				<p>Array to send: [<br><span id="MultipleUsersList"></span><br>]</p>
 			</div>
 
 			<div id="UpdateUser">
