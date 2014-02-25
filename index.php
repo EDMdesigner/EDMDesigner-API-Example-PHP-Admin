@@ -41,15 +41,19 @@ if ($_POST["userId"]) {
 		<script>
 			initEDMdesignerPlugin("admin", function(edmPlugin) {
 
-				var counter = 0;
+				//GROUPS
+				var groupList = [];
+
 				function updateGroupList() {
 					$("#NewGroup").hide();
 					$("#UpdateGroup").hide();
+					$("#UserStuff").show();
 					$("#GroupList").show();
 
 					var groupListContainer = $("#GroupListContent").empty();
 
 					edmPlugin.listGroups(function(result) {
+						groupList = result;
 						for(var idx = 0; idx < result.length; idx += 1) {
 							groupListContainer.append(createGroupListElem(result[idx]));
 						}
@@ -70,8 +74,8 @@ if ($_POST["userId"]) {
 							var text  = button.text();
 							if(text === "Show more") {
 								edmPlugin.readGroup(data._id, function (result) {
-									var fs = result.featureSwitch || {};
-									$("<p />").text(fs).appendTo(name);
+									var fs = result.featureSwitch || "{}";
+									$("<p />").html("id: " + result._id + "<br> features: " + fs).appendTo(name);
 									button.text("Show less");
 								});
 							} else {
@@ -82,10 +86,10 @@ if ($_POST["userId"]) {
 						})
 						.appendTo(buttons);
 
-					var EditProjectInfoButton = $("<button>")
+					var EditGroupInfoButton = $("<button>")
 						.text("Update group")
 						.click(function() {
-							$("#ProjectStuff").hide();
+							$("#UserStuff").hide();
 							$("#GroupList").hide();
 							var groupUpdate = $("#UpdateGroup");
 							groupUpdate.show();
@@ -99,8 +103,6 @@ if ($_POST["userId"]) {
 							$("#GroupUpdateCancel").off("click");
 
 							$("#GroupUpdateOk").click(function() {
-								console.log(counter);
-								counter++;
 								var name = nameInput.val();
 								var feature = featureInput.val();
 
@@ -148,7 +150,155 @@ if ($_POST["userId"]) {
 				});
 
 
-				$(document).ready(updateGroupList);
+				//USERS
+
+				function updateUserList() {
+					$("#NewUser").hide();
+					$("#UpdateUser").hide();
+					$("#GroupStuff").show();
+					$("#UserList").show();
+
+					var userListContainer = $("#UserListContent").empty();
+
+					edmPlugin.listUsers(function(result) {
+						for(var idx = 0; idx < result.length; idx += 1) {
+							userListContainer.append(createUserListElem(result[idx]));
+						}
+					});
+				}
+
+				function createOptions(select, groupId) {
+					var length = groupList.length;
+					for(var i = 0; i < length; i+= 1) {
+						var option = $("<option />");
+						option.attr("value", groupList[i]._id);
+						option.text(groupList[i].name);
+						if(!groupId) {
+							if(i === 0) {
+								option.attr("selected", true);
+							}
+						} else {
+							if(groupList[i]._id === groupId) {
+								option.attr("selected", true);
+							}
+						}
+						select.append(option);
+					}
+				}
+
+				function createUserListElem(data) {
+					var elem = $("<div class='user-list-elem'/>");
+					var name = $("<div class='info'/>").appendTo(elem);
+					var buttons = $("<div class='buttons'/>").appendTo(elem);
+
+					name.append($("<h3/>").text(data.id));
+
+					var openButton = $("<button/>")
+						.text("Show more")
+						.click(function(event) {
+							var button = $(event.delegateTarget);
+							var text  = button.text();
+							if(text === "Show more") {
+								edmPlugin.readUser(data.id, function (result) {
+									$("<p />").html("createTime: " + result.createTime + "<br> group id: " + result.group).appendTo(name);
+									button.text("Show less");
+								});
+							} else {
+								var p = name.find("p");
+								p.remove();
+								button.text("Show more");
+							}
+						})
+						.appendTo(buttons);
+
+					var EditUserButton = $("<button>")
+						.text("Update user")
+						.click(function() {
+							$("#GroupStuff").hide();
+							$("#UserList").hide();
+							$("#UpdateUser").show();
+
+							var groupInput = $("#UserGroupInput");
+							groupInput.empty();
+							createOptions(groupInput, data.group);
+
+							$("#UserUpdateOk").off("click");
+							$("#UserUpdateCancel").off("click");
+
+							$("#UserUpdateOk").click(function() {
+								var group = groupInput.val();
+
+								groupInput.val("");
+
+								edmPlugin.updateUser(data.id, {group: group}, function(result) {
+									updateUserList();
+								});
+							});
+
+							$("#UserUpdateCancel").click(function() {
+								updateUserList();
+							});
+						})
+						.appendTo(buttons);
+
+					var deleteUserButton = $("<button>")
+					.text("Delete")
+					.click(function() {
+						edmPlugin.deleteUser(data.id, function(result) {
+							updateUserList();
+						});
+					})
+					.appendTo(buttons);
+
+					return elem;
+				}
+
+				$("#NewUserButton").click(function() {
+					$("#UserList").hide();
+					$("#NewUser").show();
+
+					var groupSelect = $("#NewUserGroup");
+
+					groupSelect.empty();
+
+					createOptions(groupSelect);
+				});
+
+				$("#NewUserAddButton").click(function() {
+					var idInput = $("#NewUserId"),
+						emailInput = $("#NewUserEmail"),
+						nameInput = $("#NewUserName"),
+						groupInput = $("#NewUserGroup");
+
+
+					if(idInput.val() !== "") {
+						var data = {
+							id: idInput.val(),
+							group: groupInput.val()
+						};
+
+						if(emailInput.val() !== "") {
+							data.email = emailInput.val();
+							emailInput.val("");
+						}
+						if(nameInput.val() !== "") {
+							data.normalName = nameInput.val();
+							nameInput.val("");
+						}
+
+						idInput.val("");
+						edmPlugin.createUser(data, updateUserList);
+					}
+				});
+
+
+
+				function readyHandler() {
+					updateGroupList();
+					updateUserList();
+				}
+
+				$(document).ready(readyHandler);
 			}, function(error) {
 				alert(error);
 			});
@@ -156,40 +306,87 @@ if ($_POST["userId"]) {
 	</head>
 	<body>
 		<div>
-			<h1>EDMdesigner-API-Example-PHP</h1>
+			<h1>EDMdesigner-API-Example-PHP-Admin</h1>
 		</div>
 
-		<div id="GroupList">
+		<div id="GroupStuff">
+			<div id="GroupList">
 
-			<button id="NewGroupButton">New group</button>
-			
-			<h2>Groups</h2>
+				<button id="NewGroupButton">New group</button>
+				
+				<h2>Groups</h2>
 
-			<div id="GroupListContent">
+				<div id="GroupListContent">
+				</div>
+				
 			</div>
-			
+
+			<div id="NewGroup">
+				<h2>New Group</h2>
+				<h3>name</h3>
+				<input id="NewGroupName"/>
+				<h3>Feature list</h3>
+				<textarea id="NewGroupFeatures" placeholder="{}"></textarea>
+				<div>
+					<button id="NewGroupAddButton">Add</button>
+				</div>
+			</div>
+
+			<div id="UpdateGroup">
+				<h2>Update Group</h2>
+				<div>
+					<input id="GroupNameInput" />
+				</div>
+				<textarea id="GroupFeatureTextarea" placeholder="{}"></textarea>
+				<div>
+					<button id="GroupUpdateOk">Ok</button>
+					<button id="GroupUpdateCancel">Cancel</button>
+				</div>
+			</div>
 		</div>
 
-		<div id="NewGroup">
-			<h2>New Group</h2>
-			<h3>name</h3>
-			<input id="NewGroupName"/>
-			<h3>Feature list</h3>
-			<textarea id="NewGroupFeatures" placeholder="{}"></textarea>
-			<div>
-				<button id="NewGroupAddButton">Add</button>
-			</div>
-		</div>
+		<br>
+		<br>
 
-		<div id="UpdateGroup">
-			<h2>Update Group</h2>
-			<div>
-				<input id="GroupNameInput" />
+		<div id="UserStuff">
+			<div id="UserList">
+
+				<button id="NewUserButton">New user</button>
+				
+				<h2>Users</h2>
+
+				<div id="UserListContent">
+				</div>
+				
 			</div>
-			<textarea id="GroupFeatureTextarea" placeholder="{}"></textarea>
-			<div>
-				<button id="GroupUpdateOk">Ok</button>
-				<button id="GroupUpdateCancel">Cancel</button>
+
+			<div id="NewUser">
+				<h2>New User</h2>
+				<h3>UserId*</h3>
+				<input id="NewUserId"/>
+				<h3>Email</h3>
+				<input id="NewUserEmail" />
+				<h3>Normal Name</h3>
+				<input id="NewUserName" />
+				<h3>Group</h3>
+				<select id="NewUserGroup" >
+				</select>
+				<p>*required</p>
+				<div>
+					<button id="NewUserAddButton">Add</button>
+				</div>
+			</div>
+
+			<div id="UpdateUser">
+				<h2>Update User's group</h2>
+				<div>
+					<select id="UserGroupInput" >
+					</select>
+				</div>
+				<div>
+					<button id="UserUpdateOk">Ok</button>
+					<button id="UserUpdateCancel">Cancel</button>
+				</div>
 			</div>
 		</div>
 
