@@ -317,8 +317,6 @@ Creates a new user
   * data {Object}
     * data.id {String} /REQUIRED/ The id you want to use for this new user
     * data.group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-    * data.email {String} The user's email address
-    * data.normalName {String} The user's real name
   * callback
  
 #### Example:
@@ -327,7 +325,7 @@ Creates a new user
 		initEDMdesignerPlugin("TestAdmin", function(edmDesignerApi) {
 			edmDesignerApi.createGroup({name: "exampleGroup", featureSwitch: {}}, function(result) {
 			
-				edmDesignerApi.createUser({id: "exampleuserId", group: result._id, email: "example@foo.bar", normalName: "Dr. Foo Bar"}, function(resultUser) {
+				edmDesignerApi.createUser({id: "exampleuserId", group: result._id}, function(resultUser) {
 					// the resultUser is an object with an id property
 					console.log(resultUser);
 				});
@@ -342,8 +340,6 @@ Creates multiple user
   * data {Array} It contains user objects. User object should have the following properties:
     * id {String} /REQUIRED/ The id you want to use for this new user
     * group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-    * email {String} The user's email address
-    * normalName {String} The user's real name
   * callback
  
 #### Example:
@@ -352,8 +348,9 @@ Creates multiple user
 		initEDMdesignerPlugin("TestAdmin", function(edmDesignerApi) {
 			edmDesignerApi.createGroup({name: "exampleGroup", featureSwitch: {}}, function(result) {
 			
-				edmDesignerApi.createMultipleUser([{id: "exampleUserId", group: result._id, email: "example@foo.bar", normalName: "Dr. Foo Bar"}, {id: "exampleUser2Id}, {id: "exampleUser3"}], function(resultObj) {
+				edmDesignerApi.createMultipleUser([{id: "exampleUserId", group: result._id}, {id: "exampleUser2Id}, {id: "exampleUser3"}], function(resultObj) {
 					// the resultObj is an object with the following properties:
+					// created {Array} It contains the users whose have been created
 					// failed {Array} It contains the users whose creation has failed
 					// alreadyHave {Array} It contains the users whose you already created
 					console.log(resultObj);
