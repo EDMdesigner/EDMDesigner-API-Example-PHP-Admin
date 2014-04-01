@@ -73,7 +73,7 @@ if ($_POST["userId"]) {
 							var button = $(event.delegateTarget);
 							var text  = button.text();
 							if(text === "Show more") {
-								edmPlugin.readGroup(data._id, function (result) {
+								edmPlugin.getGroup(data._id, function (result) {
 									var fs = result.featureSwitch || "{}";
 									$("<p />").html("id: " + result._id + "<br> features: " + fs).appendTo(name);
 									button.text("Show less");
@@ -201,7 +201,7 @@ if ($_POST["userId"]) {
 							var button = $(event.delegateTarget);
 							var text  = button.text();
 							if(text === "Show more") {
-								edmPlugin.readUser(data.id, function (result) {
+								edmPlugin.getUser(data.id, function (result) {
 									$("<p />").html("createTime: " + result.createTime + "<br> group id: " + result.group).appendTo(name);
 									button.text("Show less");
 								});
@@ -266,12 +266,6 @@ if ($_POST["userId"]) {
 						text += ",<br>";
 					}
 					text += "{id: " + element.id;
-					if(element.email) {
-						text += ", email: " + element.email;
-					}
-					if(element.normalName) {
-						text += ", normalName: " + element.normalName;
-					}
 					text += ", group: " + element.group + "}";
 
 					span.append(text);
@@ -291,8 +285,6 @@ if ($_POST["userId"]) {
 
 				$("#NewUserAddButton").click(function() {
 					var idInput = $("#NewUserId"),
-						emailInput = $("#NewUserEmail"),
-						nameInput = $("#NewUserName"),
 						groupInput = $("#NewUserGroup");
 
 
@@ -301,15 +293,6 @@ if ($_POST["userId"]) {
 							id: idInput.val(),
 							group: groupInput.val()
 						};
-
-						if(emailInput.val() !== "") {
-							data.email = emailInput.val();
-							emailInput.val("");
-						}
-						if(nameInput.val() !== "") {
-							data.normalName = nameInput.val();
-							nameInput.val("");
-						}
 
 						idInput.val("");
 						edmPlugin.createUser(data, updateUserList);
@@ -331,8 +314,6 @@ if ($_POST["userId"]) {
 
 				$("#MultipleNewUserAddButton").click(function() {
 					var idInput = $("#MultipleNewUserId"),
-						emailInput = $("#MultipleNewUserEmail"),
-						nameInput = $("#MultipleNewUserName"),
 						groupInput = $("#MultipleNewUserGroup");
 
 
@@ -341,15 +322,6 @@ if ($_POST["userId"]) {
 							id: idInput.val(),
 							group: groupInput.val()
 						};
-
-						if(emailInput.val() !== "") {
-							data.email = emailInput.val();
-							emailInput.val("");
-						}
-						if(nameInput.val() !== "") {
-							data.normalName = nameInput.val();
-							nameInput.val("");
-						}
 
 						idInput.val("");
 						pushToCreateList(data);
@@ -437,10 +409,6 @@ if ($_POST["userId"]) {
 				<h2>New User</h2>
 				<h3>UserId*</h3>
 				<input id="NewUserId"/>
-				<h3>Email</h3>
-				<input id="NewUserEmail" />
-				<h3>Normal Name</h3>
-				<input id="NewUserName" />
 				<h3>Group</h3>
 				<select id="NewUserGroup" >
 				</select>
@@ -454,10 +422,6 @@ if ($_POST["userId"]) {
 				<h2>New User</h2>
 				<h3>UserId*</h3>
 				<input id="MultipleNewUserId"/>
-				<h3>Email</h3>
-				<input id="MultipleNewUserEmail" />
-				<h3>Normal Name</h3>
-				<input id="MultipleNewUserName" />
 				<h3>Group</h3>
 				<select id="MultipleNewUserGroup" >
 				</select>
