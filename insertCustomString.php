@@ -1,7 +1,7 @@
 <?php
 
-	$publicId = "API_EDM";//"TESTAPIKEY";
-	$magic = "3dsd345Gasaz9u3s234d";//"XSDE422RSDJQDJW8QADM31SMA";
+	$publicId = "TESTAPIKEY";
+	$magic = "XSDE422RSDJQDJW8QADM31SMA";
 	$user = 'admin';
 
 	$getTokenUrl = "http://127.0.0.1:3001/api/token";
@@ -40,7 +40,7 @@
 
 	// addCustomString to ApiUser
 	$customStrings = array();
-	$customStrings['userId'] = '52d79ebda174c400000020b7'; // It must be one of your existing user's id, otherwise returns error
+	$customStrings['userId'] = ''; // It must be one of your existing user's id, otherwise returns error
 	$customStrings['items'] = array();
 	$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
 	$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
