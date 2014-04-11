@@ -140,7 +140,8 @@ Opens a project.
 			});
 		});
 	</script>
-	
+
+___	
 
 ### edmDesignerApi.generateProject(projectId, callback)
 Generates the bulletproof responsive HTML e-mail based on the projectId.
@@ -159,7 +160,8 @@ Generates the bulletproof responsive HTML e-mail based on the projectId.
 			});
 		});
 	</script>
-	
+
+___	
 	
 ### edmDesignerApi.getDefaultTemplates(callback)
 You can get the default templates povided by EDMdesigner by calling this funciton.
@@ -176,6 +178,8 @@ You can get the default templates povided by EDMdesigner by calling this funcito
 		});
 	</script>
 
+___
+
 ##Admin functions
 ### edmDesignerApi.listGroups(callback)
 Lists the groups you have
@@ -191,6 +195,8 @@ Lists the groups you have
 			});
 		});
 	</script>
+
+___
 
 ### edmDesignerApi.createGroup(data, callback)
 Creates a new group
@@ -213,6 +219,8 @@ Creates a new group
 			});
 		});
 	</script>
+
+___
 
 ### edmDesignerApi.getGroup(groupId, callback)
 Gets a specified group
@@ -238,6 +246,7 @@ Gets a specified group
 		});
 	</script>
 
+___
 
 ### edmDesignerApi.updateGroup(groupId, data, callback)
 Updates a specified group's name or the features it provides or both of these two at the same time.
@@ -289,7 +298,8 @@ Updates a specified group's name or the features it provides or both of these tw
 			});
 		});
 	</script>
-	
+
+___
 	
 ### edmDesignerApi.listUsers(callback)
 Lists the users you have
@@ -310,6 +320,8 @@ Lists the users you have
 			});
 		});
 	</script>
+
+___
 
 ### edmDesignerApi.createUser(data, callback)
 Creates a new user
@@ -333,6 +345,8 @@ Creates a new user
 			});
 		});
 	</script>
+
+___
 
 ### edmDesignerApi.createMultipleUser(data, callback)
 Creates multiple user
@@ -360,6 +374,8 @@ Creates multiple user
 		});
 	</script>
 
+___
+
 ### edmDesignerApi.getUser(userId, callback)
 Gets a specified user
 #### Parameters:
@@ -384,6 +400,7 @@ Gets a specified user
 		});
 	</script>
 
+___
 
 ### edmDesignerApi.updateUser(userId, data, callback)
 Updates a specified user. Only the group (which the user belongs) can be changed.
@@ -410,6 +427,8 @@ Updates a specified user. Only the group (which the user belongs) can be changed
 		});
 	</script>
 
+___
+
 ### edmDesignerApi.deleteUser(userId, callback)
 Deletes a specified user
 #### Parameters:
@@ -431,8 +450,72 @@ Deletes a specified user
 		});
 	</script>
 
-# PHP to API functions
+___
+
+# Server side routes
+Almost every client side functions have a corresponding route on server side.
+
 ## Admin functions
+
+## Group manipulating routes
+### List groups
+Lists the groups you have
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/groups/list
+
+___
+
+### Create group
+Creates a new group
+
+#####Type
+  + POST
+
+#####Route 
+  + //api.edmdesigner.com/json/groups/create
+
+#### Parameters (you should post):
+  * name {String} /REQUIRED/ The name you want to give to the new group
+  * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from. 
+
+___
+
+### Get one group
+Gets a specified group
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/groups/read/:id
+
+#### Parameters (in the route):
+   * id {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+
+___
+
+### Update one group
+Updates a specified group's name or the features it provides or both of these two at the same time.
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/groups/update
+
+#### Parameters (you should post):
+   * _id {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+   * name {String} The name you want to give to the group
+   * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+
+___
+
+## User manipulating routes
+
 
 ### Create handshaking
 Create the handshaking between PHP and API needs to be done before any further call
@@ -458,6 +541,7 @@ Create the handshaking between PHP and API needs to be done before any further c
 		$result = file_get_contents($url, false, $context);
 		
 		$token = json_decode($result, TRUE);
+
 
 ### Add custom string to all users
 Add customstrings to all of your users.
