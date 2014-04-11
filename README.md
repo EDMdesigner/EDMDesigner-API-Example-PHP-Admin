@@ -430,7 +430,85 @@ Deletes a specified user
 			});
 		});
 	</script>
+
+# PHP to API functions
+## Admin functions
+
+### Create handshaking
+Create the handshaking between PHP and API needs to be done before any further call
+		
+		$url = "http://api.edmdesigner.com/api/token";
+		$data = array(
+			"id"	=> $publicId,
+			"uid"	=> $user,
+			"ip"	=> $ip,
+			"ts"	=> $timestamp,
+			"hash"	=> $hash
+		);
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		
+		$token = json_decode($result, TRUE);
+
+### Add custom string to all users
+Add customstrings to all of your users.
+Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
 	
+		$url = "http://api.edmdesigner.com/json/user/addCustomStrings?token=".$token."&user=".$user;
+		//the $token is the string received from token validation and the $user is an existing userId
+		
+		$customStrings = array();
+		$customStrings['items'] = array();
+		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
+		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
+		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		$savedResult = json_decode($result, TRUE);
+
+### Add custom string to specified user
+Add customstrings to just some of your users. 
+Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
+	
+		$url = "http://api.edmdesigner.com/json/user/addCustomStringsToUser?token=".$token."&user=".$user;
+		//the $token is the string received from token validation and the $user is an existing userId
+		
+		$customStrings = array();
+		$customStrings['userId'] = 'your user id'; // It must be one of your existing user's id, otherwise returns error
+		$customStrings['items'] = array();
+		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
+		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
+		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		$savedResult = json_decode($result, TRUE);
 
 Example implementations
 -----------------------
