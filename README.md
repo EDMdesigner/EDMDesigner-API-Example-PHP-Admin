@@ -61,7 +61,8 @@ Lists the projects of the actual user.
 			});
 		});
 	</script>
-	
+
+___	
 
 ### edmDesignerApi.createProject(data, callback)
 Creates a new project (a new e-mail template).
@@ -83,7 +84,8 @@ Creates a new project (a new e-mail template).
 			});
 		});
 	</script>
-	
+
+___	
 	
 ### edmDesignerApi.duplicateProject(projectId, callback)
 Creates the exact copy of the project with the ID specified in projectId.
@@ -102,7 +104,8 @@ Creates the exact copy of the project with the ID specified in projectId.
 			});
 		});
 	</script>
-	
+
+___	
 
 ### edmDesignerApi.removeProject(projectId, callback)
 Removes a project.
@@ -121,7 +124,8 @@ Removes a project.
 			});
 		});
 	</script>
-	
+
+___	
 
 ### edmDesignerApi.openProject(projectId, callback)
 Opens a project.
@@ -457,6 +461,34 @@ Almost every client side functions have a corresponding route on server side.
 
 ## Admin functions
 
+
+### Create handshaking
+Create the handshaking between PHP and API needs to be done before any further call
+		
+		$url = "http://api.edmdesigner.com/api/token";
+		$data = array(
+			"id"	=> $publicId,
+			"uid"	=> $user,
+			"ip"	=> $ip,
+			"ts"	=> $timestamp,
+			"hash"	=> $hash
+		);
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		
+		$token = json_decode($result, TRUE);
+
+___
+
 ## Group manipulating routes
 ### List groups
 Lists the groups you have
@@ -515,32 +547,6 @@ Updates a specified group's name or the features it provides or both of these tw
 ___
 
 ## User manipulating routes
-
-
-### Create handshaking
-Create the handshaking between PHP and API needs to be done before any further call
-		
-		$url = "http://api.edmdesigner.com/api/token";
-		$data = array(
-			"id"	=> $publicId,
-			"uid"	=> $user,
-			"ip"	=> $ip,
-			"ts"	=> $timestamp,
-			"hash"	=> $hash
-		);
-		
-		$options = array(
-		    'http' => array(
-		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-		        'method'  => 'POST',
-		        'content' => http_build_query($data),
-		    )
-		);
-
-		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
-		
-		$token = json_decode($result, TRUE);
 
 
 ### Add custom string to all users
