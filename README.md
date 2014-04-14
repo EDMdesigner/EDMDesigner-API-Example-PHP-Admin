@@ -720,6 +720,138 @@ Or it can be an error object:
 
 ___
 
+##Gallery handling
+If you want to host the uploaded images yourself and want to use your other hosted images as well, then there is a few route to fulfil this functionality.
+
+Basic operation: The user upload an image in the api to our server, which upload it to the given server. This requires you to implement an upload route on your server and configure our server (you have to do the configuration only once).
+
+###Configure api server
+Set the api server the route where it can upload the images. (This route should be implemented on your server.)
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/gallery/config
+  
+#### Parameters (you should post):
+  * route {String} The route which we can use for uploading the images.
+ 
+####Answer:
+The data you posted:
+  - route {String}
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###Get configuration
+Gets the configuration of the api gallery. It returns the route you set for the uploading
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/gallery/config
+  
+####Answer:
+Config object: 
+  - route {String} The route you set for the uploading or nothing if you not configured our server yet. 
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###List images
+Lists all images of a specified user
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/gallery/list/:id
+
+####Parameters (in the route):
+  * :id {String} The id of the target user
+  
+####Answer:
+Array of urls
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###Add images
+Add one or more images to one or more specified users
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/gallery/add
+
+####Parameters (you should post):
+  * images {Array} /REQUIRED/ should contain the images you want to give to the users. Every image should be an object with the following parameters:
+    * url {String} /REQUIRED/ The url of the images (you probably host)
+    * secure_url {String} Http secure version og the image url
+    * thumb_url {String} An url where the thumbnail version of the image is available (Tha gallery can work a lot faster if you can provide a thumbnail)
+    * name {String} The name of the image. If it is not given then we will you the last segment of the url
+    * width {Number} The original width of the image (It can save a lot of process if you can provide this information)
+    * height {Number} The original height of the image (It can save a lot of process if you can provide this information)
+  * users {Array} /REQUIRED/ should contain the ids of the users
+  
+####Answer:
+Three different array:
+  - added {Array} contains the image user pairs which were successfully created. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+    - users {Array} An array containing the ids of the users whose get the image successfully
+  - alreadyHave {Array} contains the image user pairs where the user alread had the given image. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+    - users {Array} An array containing the ids of the users whose already had this image
+  - failed {Array} contains the image user pairs where the adding the image to the given users failed. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+    - users {Array} An array containing the ids of the users whose cannot get the image because of somekind of error
+    - error {String} Description of the error
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###Delete images
+Delete one or more images from one or more specified users
+
+#####Type
+  + DELETE
+
+#####Route
+  + //api.edmdesigner.com/json/gallery/delete
+
+####Parameters (you should post):
+  * images {Array} /REQUIRED/ should contain the urls of the images you want to remove from the given users.
+  * users {Array} /REQUIRED/ should contain the ids of the users.
+  
+####Answer:
+Three different array:
+  - deleted {Array} contains the image user pairs where the image was successfully deleted. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+      - url {String} The url of the image 
+    - users {Array} An array containing the ids of the users whose
+  - dontHave {Array} contains the image user pairs where the user doesn't have the given image. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+      - url {String} The url of the image 
+    - users {Array} An array containing the ids of the users whose doesn't have this image
+  - failed {Array} contains the image user pairs where the deleting the image from the given users failed. An object in this array looks like this:
+    - image {Object} One image from the posted images array
+    - users {Array} An array containing the ids of the users whose image cannot be deleted because of somekind of error
+    - error {String} Description of the error
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
 ### Add custom string to all users
 Add customstrings to all of your users.
 Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
