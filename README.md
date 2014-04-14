@@ -852,6 +852,78 @@ or it can be an error object:
 
 ___
 
+##Project handler admin routes
+
+###Create to
+Creates a project/template to a specified user
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/project/createTo
+
+####Parameters (you should post):
+  * userId {String} /REQUIRED/ The target user's id
+  * title {String} The title of the new template, if it is not given, then the project's name will be 'Untitled'
+  * description {String} Description of the template, by defaullt it is an empty string
+  * document {Object} An object, which represents a template. By setting this param, you can create new projects based on your prepared custom templates
+
+####Answer:
+Project object:
+  - _id {String} MongoDB _id of the newly created project
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###Create from to
+Creates a project/template to a specified user using an another template
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/project/createFromTo
+
+####Parameters (you should post):
+  * userId {String} /REQUIRED/ The target user's id
+  * _id {String} /REQUIRED/ The MongoDB _id of the template we want to copy to the target user
+  * title {String} The title of the new template, if it is not given, then the project's name will be 'Untitled'
+  * description {String} Description of the template, by defaullt it is an empty string
+  * document {Object} An object, which represents a template. By setting this param, you can create new projects based on your prepared custom templates
+
+####Answer:
+Project object:
+  - _id {String} MongoDB _id of the newly created project
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+###Default templates
+Every api partner get a templater user. (id = "templater"). This speciel user have a few project by default which can be used for anything you want. With this route you can list this projects.
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/project/defaults
+
+####Answer:
+List of projects. Every project is an object with the following parameters:
+  - _id {String} MongoDB _id of the project
+  - title {String} Title of the template
+  - document {Object} An object, which represents a template
+  - description {String} Description of the template
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
 ### Add custom string to all users
 Add customstrings to all of your users.
 Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
