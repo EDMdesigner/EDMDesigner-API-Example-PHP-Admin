@@ -459,8 +459,13 @@ ___
 # Server side routes
 Almost every client side functions have a corresponding route on server side.
 
-## Admin functions
 
+## Admin routes
+
+##Authentication
+To authenticate this routes, you need to generate a token to a "fake" user called admin.You should send this token and the admin string on every request's query. (like this: ?user=admint&token=token ).Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
+
+Example: //api.edmdesigner.com/json/groups/list?user=admin&token=adminToken
 
 ### Create handshaking
 Create the handshaking between PHP and API needs to be done before any further call
@@ -720,6 +725,61 @@ Or it can be an error object:
 
 ___
 
+### Add custom string to all users
+Add customstrings to all of your users.
+Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
+	
+		$url = "http://api.edmdesigner.com/json/user/addCustomStrings?token=".$token."&user=".$user;
+		//the $token is the string received from token validation and the $user is an existing userId
+		
+		$customStrings = array();
+		$customStrings['items'] = array();
+		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
+		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
+		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		$savedResult = json_decode($result, TRUE);
+		
+___
+
+### Add custom string to specified user
+Add customstrings to just some of your users. 
+Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
+	
+		$url = "http://api.edmdesigner.com/json/user/addCustomStringsToUser?token=".$token."&user=".$user;
+		//the $token is the string received from token validation and the $user is an existing userId
+		
+		$customStrings = array();
+		$customStrings['userId'] = 'your user id'; // It must be one of your existing user's id, otherwise returns error
+		$customStrings['items'] = array();
+		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
+		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
+		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
+		
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    )
+		);
+
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		$savedResult = json_decode($result, TRUE);
+
+___
+
 ##Gallery handling
 If you want to host the uploaded images yourself and want to use your other hosted images as well, then there is a few route to fulfil this functionality.
 
@@ -924,56 +984,167 @@ or it can be an error object:
 
 ___
 
-### Add custom string to all users
-Add customstrings to all of your users.
-Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
+##User routes
+
+##Authentication
+To authenticate this routes, userId and a token (generated to the userId) are needed. Those to should be sent on the request's query.(somehow like this: ?user=userID&token=token ). Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
+
+For example: //api.edmdesginer.com/json/project/list?user=userId&token=123456789
+
+##Project routes
+
+### List projects
+Lists the projects of the actual user.
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/project/list
+
+####Answer:
+List of projects. Every project is an object with the following parameters:
+  - _id {String} MongoDB _id of the project
+  - title {String} Title of the template
+  - description {String} Description of the template
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___	
+
+### Create
+Creates a new project (a new e-mail template).
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/project/list
+
+#### Parameters (you should post):
+  * title {String} The title of the new project.
+  * description {String} The description of the new project.
+  * document {Object} An object, which represents a template. By setting this param, you can create new projects based on your prepared custom templates.
+
+#### Answer:
+  - _id {String} MongoDB _id of the newly created project
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___	
 	
-		$url = "http://api.edmdesigner.com/json/user/addCustomStrings?token=".$token."&user=".$user;
-		//the $token is the string received from token validation and the $user is an existing userId
-		
-		$customStrings = array();
-		$customStrings['items'] = array();
-		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
-		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
-		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
-		
-		$options = array(
-		    'http' => array(
-		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-		        'method'  => 'POST',
-		        'content' => http_build_query($data),
-		    )
-		);
+### Duplicate
+Creates the exact copy of the project with the ID specified in projectId.
 
-		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
-		$savedResult = json_decode($result, TRUE);
+#####Type
+  + GET
 
-### Add custom string to specified user
-Add customstrings to just some of your users. 
-Note that every calls overwrites the previous, so if you want to remove all the custom strings, just do the call with 	$customStrings['items'] or dont send the items at all
-	
-		$url = "http://api.edmdesigner.com/json/user/addCustomStringsToUser?token=".$token."&user=".$user;
-		//the $token is the string received from token validation and the $user is an existing userId
-		
-		$customStrings = array();
-		$customStrings['userId'] = 'your user id'; // It must be one of your existing user's id, otherwise returns error
-		$customStrings['items'] = array();
-		$customStrings['items'][] = array('label' => 'testLabel1', 'replacer' => 'testReplacer1');
-		$customStrings['items'][] = array('label' => 'testLabel2', 'replacer' => 'testReplacer2');
-		$customStrings['items'][] = array('label' => 'testLabel3', 'replacer' => 'testReplacer3');
-		
-		$options = array(
-		    'http' => array(
-		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-		        'method'  => 'POST',
-		        'content' => http_build_query($data),
-		    )
-		);
+#####Route
+  + //api.edmdesigner.com/json/project/duplicate/:id
 
-		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
-		$savedResult = json_decode($result, TRUE);
+#### Parameters (in the route):
+  * :id {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the /json/project/list route.
+
+#### Answer:
+Project object:
+  - _id {String} The MongoDB _id of the new template
+  - title {String} The title of the new template
+  - description {String} The description of the new template
+  - document {Object} An object, which represents the new template
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___	
+
+### Remove
+Removes a project.
+
+#####Type
+  + DELETE
+
+#####Route
+  + //api.edmdesigner.com/json/project/remove/:id
+
+#### Parameters (in the route):
+  * :id {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the /json/project/list route.
+
+####Answer:
+A number, it is 1 if the project was successfully deleted
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___	
+
+### Generate
+Generates the bulletproof responsive HTML e-mail based on the projectId.
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/project/generate/:id
+
+#### Parameters (in the route):
+  * :id {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the /json/project/list route.
+
+####Answer
+A bulletproof responsive HTML version of the given template
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Get title
+Gets the title of the selected project.
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/project/title/:id
+
+#### Parameters (in the route):
+  * :id {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the /json/project/list route.
+
+####Answer
+Title object:
+  - title {String} The title of the selected project
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Update information
+Updates the information of the selected project
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/project/updateInfo
+
+#### Parameters (you should post):
+  * projectId {String} /REQUIRED/ The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the /json/project/list route.
+  * title {String} The title of the new project.
+  * description {String} The description of the new project.
+
+#### Answer:
+  - _id {String} MongoDB _id of the newly created project
+  - title {String} The title of the new template
+  - description {String} The description of the new template
+  - document {Object} An object, which represents the new template
+
+or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
 
 Example implementations
 -----------------------
