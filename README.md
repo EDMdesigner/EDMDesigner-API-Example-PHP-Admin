@@ -499,6 +499,15 @@ Lists the groups you have
 #####Route
   + //api.edmdesigner.com/json/groups/list
 
+####Answer:
+An array of your groups. Every group is an object with this parameters:
+  - _id {String} MongoDB id of the group
+  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - name {String} The name of the group
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
 ___
 
 ### Create group
@@ -512,7 +521,14 @@ Creates a new group
 
 #### Parameters (you should post):
   * name {String} /REQUIRED/ The name you want to give to the new group
-  * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from. 
+  * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+
+####Answer
+An object containing the MongoDB _id of the newly created group:
+  - _id {String}
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
 
 ___
 
@@ -528,6 +544,15 @@ Gets a specified group
 #### Parameters (in the route):
    * id {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
 
+####Answer:
+A group object:
+  - _id {String} MongoDB id of the group
+  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - name {String} The name of the group
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
 ___
 
 ### Update one group
@@ -540,14 +565,160 @@ Updates a specified group's name or the features it provides or both of these tw
   + //api.edmdesigner.com/json/groups/update
 
 #### Parameters (you should post):
-   * _id {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+   * _id {String} /REQUIRED/ The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
    * name {String} The name you want to give to the group
    * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+
+####Answer:
+A newly updated group object:
+  - _id {String} MongoDB id of the group
+  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - name {String} The name of the group
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
 
 ___
 
 ## User manipulating routes
 
+### List
+Lists the users you have
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/user/list
+
+####Answer:
+An array of your users. Every user is an object with this parameters:
+  - id {String} The id of the user
+  - group {String} The MongoDB _id of the group the user belongs to
+  - createTime {String} The time when the user was created
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Create user
+Creates a new user
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/user/create
+
+#### Parameters (you should post):
+  * id {String} /REQUIRED/ The id you want to use for this new user
+  * group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+
+####Answer:
+User object:
+  - id {String} The id of the user (your id, not the MongoDB _id)
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Create multiple user
+Creates multiple user
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/user/multipleCreate
+
+#### Parameters (you should post):
+  * users {Array} It contains user objects. User object should have the following properties:
+    * id {String} /REQUIRED/ The id you want to use for this new user. Please note that if there is no id then the server will automatically ignore that input! (In this way you can get an empty array as an answer)
+    * group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+
+####Answer:
+Three different arrays:
+  - created {Array} Contains the ids of the users who was successfully created
+    - id {String} The id of the user 
+  - alreadyHave {Array} Contains the users you already had
+    - id {String} The id of the user
+    - group {String} The MongoDB _id of the group the user belongs to
+    - createTime {String} The time when the user was created
+  - falied {Array} Contains the ids of the users whose creation failed
+    - id {String} The id of the user
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Get one user
+Gets a specified user
+
+#####Type
+  + GET
+
+#####Route
+  + //api.edmdesigner.com/json/user/getOne/:id
+
+####Parameters (in the route):
+   * :id {String} The id of the user.
+
+####Answer:
+User object:
+  - id {String} The id of the user
+  - group {String} The MongoDB _id of the group the user belongs to
+  - createTime {String} The time when the user was created
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Update user
+Updates a specified user. Only the group (which the user belongs) can be changed.
+
+#####Type
+  + POST
+
+#####Route
+  + //api.edmdesigner.com/json/user/update
+
+#### Parameters (you should post):
+   * id {String} The id of the user. 
+   * group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
+
+####Answer:
+User object:
+  - id {String} The id of the updated user
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
+
+### Delete user
+Deletes a specified user
+
+#####Type
+  + DELETE
+
+#####Route
+  + //api.edmdesigner.com/json/user/delete/:id
+  
+#### Parameters (in the route):
+   * :id {String} The id of the user.
+ 
+####Answer:
+User object:
+  - id {String} The id of the deleted user
+
+Or it can be an error object:
+  - err Description of the error {String} or an error code {Number}.
+
+___
 
 ### Add custom string to all users
 Add customstrings to all of your users.
