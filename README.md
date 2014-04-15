@@ -31,9 +31,7 @@ Initializing
 		}
 	</script>
 	
-First of all, jQuery has to be loaded before you load our API. In the second line you can see a route parameter in the script's src. By that you can tell the script where to look for the handshaking implementation. For example, if you implemented it in your index.php, you have to replace ##handshaking_route## with index.php.
-The first parameter is a user id from your system. It can be any string. If you don't want to handle separate user accounts, just pass there your API_KEY.
-The last parameter is an error callback which will be called in every request if the request fails. It is not required, and if you set an error callback in one of your function calls (see later), then thats will be called instead of this one.
+First of all, jQuery has to be loaded before you load our API. In the second line you can see a route parameter in the script's src. By that you can tell the script where to look for the handshaking implementation. For example, if you implemented it in your index.php, you have to replace ##handshaking_route## with index.php. The first parameter is a user id from your system. It can be any string. In case you don't want to handle separate user accounts, just pass there your API_KEY. The last parameter is an error callback which will be called in every request if the request fails. This is not required thus you can set an error callback in one of your function calls (see later) and in that case it will be called instead of this one.
 
 In the resulting object (edmDesignerApi) you will find some functions through which you can interact with our system.
 
@@ -252,7 +250,7 @@ Creates a new group
 #### Parameters:
   * data {Object}
     * data.name {String} /REQUIRED/ The name you want to give to the new group
-    * data.featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from. 
+    * data.featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
   * callback {Function} A function to be called if the request succeeds
   * onErrorCB {Function} A function to be called if the request fails
  
@@ -313,7 +311,7 @@ Updates a specified group's name or the features it provides or both of these tw
    * groupId {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
    * data {Object}
      * data.name {String} The name you want to give to the group
-     * data.featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+     * data.featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
   * callback {Function} A function to be called if the request succeeds
   * onErrorCB {Function} A function to be called if the request fails
  
@@ -553,7 +551,7 @@ Almost every client side functions have a corresponding route on server side.
 ## Admin routes
 
 ##Authentication
-To authenticate this routes, you need to generate a token to a "fake" user called admin.You should send this token and the admin string on every request's query. (like this: ?user=admint&token=token ).Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
+To authenticate these routes, you need to generate a token to a "fake" user called admin.You should send this token and the admin string on every request's query. (like this: ?user=admint&token=token ).Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
 
 Example: //api.edmdesigner.com/json/groups/list?user=admin&token=adminToken
 
@@ -597,7 +595,7 @@ Lists the groups you have
 ####Answer:
 An array of your groups. Every group is an object with this parameters:
   - _id {String} MongoDB id of the group
-  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
   - name {String} The name of the group
 
 Or it can be an error object:
@@ -616,7 +614,7 @@ Creates a new group
 
 #### Parameters (you should post):
   * name {String} /REQUIRED/ The name you want to give to the new group
-  * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  * featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
 
 ####Answer
 An object containing the MongoDB _id of the newly created group:
@@ -642,7 +640,7 @@ Gets a specified group
 ####Answer:
 A group object:
   - _id {String} MongoDB id of the group
-  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
   - name {String} The name of the group
 
 Or it can be an error object:
@@ -662,12 +660,12 @@ Updates a specified group's name or the features it provides or both of these tw
 #### Parameters (you should post):
    * _id {String} /REQUIRED/ The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the /json/groups/list route.
    * name {String} The name you want to give to the group
-   * featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+   * featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
 
 ####Answer:
 A newly updated group object:
   - _id {String} MongoDB id of the group
-  - featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
+  - featureSwitch {Object} The features that are available for users belong to this group. Please note that now it doesn't have any function, but later there will be a list of possible features which you can choose from.
   - name {String} The name of the group
 
 Or it can be an error object:
@@ -871,9 +869,9 @@ Note that every calls overwrites the previous, so if you want to remove all the 
 ___
 
 ##Gallery handling
-If you want to host the uploaded images yourself and want to use your other hosted images as well, then there is a few route to fulfil this functionality.
+If you want to host the uploaded images yourself and want to use your other hosted images as well, then there are a few routes to fulfil this functionality.
 
-Basic operation: The user upload an image in the api to our server, which upload it to the given server. This requires you to implement an upload route on your server and configure our server (you have to do the configuration only once).
+Basic operation: The user uploads an image in the api to our server, which uploads it to the given server. This requires you to implement an upload route on your server and configure our server (you have to do the configuration only once).
 
 ###Configure api server
 Set the api server the route where it can upload the images. (This route should be implemented on your server.)
@@ -1077,7 +1075,7 @@ ___
 ##User routes
 
 ##Authentication
-To authenticate this routes, userId and a token (generated to the userId) are needed. Those to should be sent on the request's query.(somehow like this: ?user=userID&token=token ). Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
+To authenticate these routes, userId and a token (generated to the userId) are needed. Those to should be sent on the request's query.(somehow like this: ?user=userID&token=token ). Please note that every route need to be authenticated expect the one which generate the token. (//api.edmdesigner.com/api/token)
 
 For example: //api.edmdesginer.com/json/project/list?user=userId&token=123456789
 
