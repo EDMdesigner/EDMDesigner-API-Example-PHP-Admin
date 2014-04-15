@@ -24,11 +24,16 @@ Initializing
 	<script>
 		initEDMdesignerPlugin("##userId##", function(edmDesignerApi) {
 			...
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 	
 First of all, jQuery has to be loaded before you load our API. In the second line you can see a route parameter in the script's src. By that you can tell the script where to look for the handshaking implementation. For example, if you implemented it in your index.php, you have to replace ##handshaking_route## with index.php.
 The first parameter is a user id from your system. It can be any string. If you don't want to handle separate user accounts, just pass there your API_KEY.
+The last parameter is an error callback which will be called in every request if the request fails. It is not required, and if you set an error callback in one of your function calls (see later), then thats will be called instead of this one.
 
 In the resulting object (edmDesignerApi) you will find some functions through which you can interact with our system.
 
@@ -47,10 +52,11 @@ If everything goes well, you get back a token, with which your user can be ident
 
 # API functions
 ## User functions
-### edmDesignerApi.listProjects(callback)
+### edmDesignerApi.listProjects(callback, onErrorCB)
 Lists the projects of the actual user.
 #### Parameters:
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -59,21 +65,26 @@ Lists the projects of the actual user.
 			edmDesignerApi.listProjects(function(result) {
 				console.log(result);
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 
-### edmDesignerApi.createProject(data, callback)
+### edmDesignerApi.createProject(data, callback, onErrorCB)
 Creates a new project (a new e-mail template).
 #### Parameters:
   * data {Object}
     * data.title {String} The title of the new project.
     * data.description {String} The description of the new project.
     * data.document {Object} An object, which represents a template. By setting this param, you can create new projects based on your prepared custom templates.
-  * callback(result) {Function}
+  * callback {Function} A function to be called if the request succeeds
     * the result param is an object in which you can find an _id property, which identifies the newly created project
     * result._id {String} The id of the new project. (This is a [MongoDB](http://www.mongodb.org/) id.)
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -82,16 +93,21 @@ Creates a new project (a new e-mail template).
 			edmDesignerApi.createProject(function({title: "test-title", description: "test-desc", document: {}}, result) {
 				console.log(result._id);
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 	
-### edmDesignerApi.duplicateProject(projectId, callback)
+### edmDesignerApi.duplicateProject(projectId, callback, onErrorCB)
 Creates the exact copy of the project with the ID specified in projectId.
 #### Parameters:
   * projectId {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the edmDesignerAPI.listProjects function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -102,16 +118,21 @@ Creates the exact copy of the project with the ID specified in projectId.
 					//callback hell...
 				});
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 
-### edmDesignerApi.removeProject(projectId, callback)
+### edmDesignerApi.removeProject(projectId, callback, onErrorCB)
 Removes a project.
 #### Parameters:
   * projectId {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the edmDesignerAPI.listProjects function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -122,16 +143,21 @@ Removes a project.
 					//callback hell...
 				});
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 
-### edmDesignerApi.openProject(projectId, callback)
+### edmDesignerApi.openProject(projectId, callback, onErrorCB)
 Opens a project.
 #### Parameters:
   * projectId {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the edmDesignerAPI.listProjects function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -142,16 +168,21 @@ Opens a project.
 					$("body").append(result.iframe);
 				});
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 
-### edmDesignerApi.generateProject(projectId, callback)
+### edmDesignerApi.generateProject(projectId, callback, onErrorCB)
 Generates the bulletproof responsive HTML e-mail based on the projectId.
 #### Parameters:
   * projectId {String} The id of the project. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed the projects of the user with the edmDesignerAPI.listProjects function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
 
 #### Example:
 	
@@ -162,33 +193,43 @@ Generates the bulletproof responsive HTML e-mail based on the projectId.
 					//the result is a robust responsive HTML e-mail code.
 				});
 			});
-		});
+		}, onErrorCB);
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___	
 	
-### edmDesignerApi.getDefaultTemplates(callback)
+### edmDesignerApi.getDefaultTemplates(callback, onErrorCB)
 You can get the default templates povided by EDMdesigner by calling this funciton.
 #### Parameters:
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
-	
-  <script>
-	  initEDMdesignerPlugin("TestUser", function(edmDesignerApi) {
+
+	<script>
+		initEDMdesignerPlugin("TestUser", function(edmDesignerApi) {
 			edmDesignerApi.getDefaultTemplates(function(result) {
-				//the result is an array, containing the default projects, provided by EDMdesigner
-			});
+			//the result is an array, containing the default projects, provided by EDMdesigner
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
 ##Admin functions
-### edmDesignerApi.listGroups(callback)
+### edmDesignerApi.listGroups(callback, onErrorCB)
 Lists the groups you have
 #### Parameters:
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -196,19 +237,24 @@ Lists the groups you have
 		initEDMdesignerPlugin("TestAdmin", function(edmDesignerApi) {
 			edmDesignerApi.listGroups(function(result) {
 				//the result is an array, containing your groups
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.createGroup(data, callback)
+### edmDesignerApi.createGroup(data, callback, onErrorCB)
 Creates a new group
 #### Parameters:
   * data {Object}
     * data.name {String} /REQUIRED/ The name you want to give to the new group
     * data.featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from. 
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -220,17 +266,22 @@ Creates a new group
 				//_id  {String} (the new group's id) and
 				//featureSwitch {Object} (the group's features) properties
 				console.log(result);
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.getGroup(groupId, callback)
+### edmDesignerApi.getGroup(groupId, callback, onErrorCB)
 Gets a specified group
 #### Parameters:
    * groupId {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-   * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -244,22 +295,27 @@ Gets a specified group
 					//_id  {String} (the new group's id) and
 					//featureSwitch {Object} (the group's features) properties
 					console.log(resultGroup);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.updateGroup(groupId, data, callback)
+### edmDesignerApi.updateGroup(groupId, data, callback, onErrorCB)
 Updates a specified group's name or the features it provides or both of these two at the same time.
 #### Parameters:
    * groupId {String} The id of the group. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
    * data {Object}
      * data.name {String} The name you want to give to the group
      * data.featureSwitch {Object} The features that available for users belong to this group. Please note that now it doesn't has any function, but later there will be a list of possible features which you can choose from.
-   * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -273,9 +329,9 @@ Updates a specified group's name or the features it provides or both of these tw
 					//_id  {String} (the new group's id) and
 					//featureSwitch {Object} (the group's features) properties
 					console.log(resultGroup);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 			
 			edmDesignerApi.createGroup({name: "exampleGroup2", featureSwitch: {feature1: true}}, function(result) {
 			
@@ -285,9 +341,9 @@ Updates a specified group's name or the features it provides or both of these tw
 					//_id  {String} (the new group's id) and
 					//featureSwitch {Object} (the group's features) properties
 					console.log(resultGroup);
-				});
+				}, onErrorCB);
 				
-			});
+			}, onErrorCB);
 			
 			edmDesignerApi.createGroup({name: "exampleGroup3", featureSwitch: {feature1: true}}, function(result) {
 			
@@ -297,18 +353,23 @@ Updates a specified group's name or the features it provides or both of these tw
 					//_id  {String} (the new group's id) and
 					//featureSwitch {Object} (the group's features) properties
 					console.log(resultGroup);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
+		
+			function onErrorCB(error) {
+				console.log(error);
+			}
 		});
 	</script>
 
 ___
 	
-### edmDesignerApi.listUsers(callback)
+### edmDesignerApi.listUsers(callback, onErrorCB)
 Lists the users you have
 #### Parameters:
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -321,19 +382,24 @@ Lists the users you have
 				//group (The group which the user belongs) and
 				//createTime (Time of creation) properties
 				console.log(result);
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.createUser(data, callback)
+### edmDesignerApi.createUser(data, callback, onErrorCB)
 Creates a new user
 #### Parameters:
   * data {Object}
     * data.id {String} /REQUIRED/ The id you want to use for this new user
     * data.group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -344,21 +410,26 @@ Creates a new user
 				edmDesignerApi.createUser({id: "exampleuserId", group: result._id}, function(resultUser) {
 					// the resultUser is an object with an id property
 					console.log(resultUser);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.createMultipleUser(data, callback)
+### edmDesignerApi.createMultipleUser(data, callback, onErrorCB)
 Creates multiple user
 #### Parameters:
   * data {Array} It contains user objects. User object should have the following properties:
     * id {String} /REQUIRED/ The id you want to use for this new user
     * group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-  * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -372,19 +443,24 @@ Creates multiple user
 					// failed {Array} It contains the users whose creation has failed
 					// alreadyHave {Array} It contains the users whose you already created
 					console.log(resultObj);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.getUser(userId, callback)
+### edmDesignerApi.getUser(userId, callback, onErrorCB)
 Gets a specified user
 #### Parameters:
    * userId {String} The id of the user.
-   * callback
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -398,21 +474,26 @@ Gets a specified user
 					group (The group which the user belongs) and
 					createTime (Time of creation) properties*/
 					console.log(resultUser);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.updateUser(userId, data, callback)
+### edmDesignerApi.updateUser(userId, data, callback, onErrorCB)
 Updates a specified user. Only the group (which the user belongs) can be changed.
 #### Parameters:
-   * userId {String} The id of the user. 
-   * data {Object}
-     * data.group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
-   * callback
+  * userId {String} The id of the user. 
+  * data {Object}
+    * data.group {String} The id of the group you want this user to belong. Note that it has to be a valid MongoDB _id. It's best if you use the values that you got when you listed your groups with the edmDesignerAPI.listGroups function.
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -424,20 +505,25 @@ Updates a specified user. Only the group (which the user belongs) can be changed
 					edmDesignerApi.updateUser(result.id, {group: resultGroup._id}, function(resultUser) {	
 						//the resultUser is an object with an id property
 						console.log(resultUser);
-					});
+					}, onErrorCB);
 				
-				});
-			});
+				}, onErrorCB);
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
 
-### edmDesignerApi.deleteUser(userId, callback)
+### edmDesignerApi.deleteUser(userId, callback, onErrorCB)
 Deletes a specified user
 #### Parameters:
-   * userId {String} The id of the user.
-   * callback
+  * userId {String} The id of the user.
+  * callback {Function} A function to be called if the request succeeds
+  * onErrorCB {Function} A function to be called if the request fails
  
 #### Example:
 	
@@ -448,10 +534,14 @@ Deletes a specified user
 				edmDesignerApi.deleteUser(result.id, function(resultUser) {
 					//the resultUser is an object with an id propert
 					console.log(resultUser);
-				});
+				}, onErrorCB);
 			
-			});
+			}, onErrorCB);
 		});
+		
+		function onErrorCB(error) {
+			console.log(error);
+		}
 	</script>
 
 ___
@@ -1121,7 +1211,7 @@ or it can be an error object:
 ___
 
 ### Update information
-Updates the information of the selected project
+Updates the title or/and the description of the specified project
 
 #####Type
   + POST
