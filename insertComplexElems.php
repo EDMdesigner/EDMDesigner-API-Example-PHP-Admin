@@ -1,13 +1,15 @@
 <?php
 
-	$publicId = "TESTAPIKEY";
-	$magic = "XSDE422RSDJQDJW8QADM31SMA";
-	$user = 'admin';
+	$publicId = "YOUR-API-KEY";
+	$magic = "your-magic-word";
+	$user = "admin";
 
-	$getTokenUrl = "http://127.0.0.1:3001/api/token";
-	$addComplexElemToUsersUrl = "http://127.0.0.1:3001/json/complexElem/addComplexElemToUsers";
-	$addComplexElemToGroupUrl = "http://127.0.0.1:3001/json/complexElem/addComplexElemToGroup";
-	$addComplexElemUrl = "http://127.0.0.1:3001/json/complexElem/addComplexElem";
+	$apiEndpoint = "https://api-a.edmdesigner.com";
+
+	$getTokenUrl = $apiEndpoint . "/api/token";
+	$addComplexElemToUsersUrl = $apiEndpoint . "/json/complexElem/addComplexElemToUsers";
+	$addComplexElemToGroupUrl = $apiEndpoint . "/json/complexElem/addComplexElemToGroup";
+	$addComplexElemUrl = $apiEndpoint . "/json/complexElem/addComplexElem";
 
 	// handshake
 	$ip = $_SERVER["REMOTE_ADDR"];

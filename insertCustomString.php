@@ -1,12 +1,14 @@
 <?php
 
-	$publicId = "TESTAPIKEY";
-	$magic = "XSDE422RSDJQDJW8QADM31SMA";
-	$user = 'admin';
+	$publicId = "YOUR-API-KEY";
+	$magic = "your-magic-word";
+	$user = "admin";
 
-	$getTokenUrl = "http://127.0.0.1:3001/api/token";
-	$addCustomStringsUrl = "http://127.0.0.1:3001/json/user/addCustomStrings";
-	$addCustomStringsToUserUrl = "http://127.0.0.1:3001/json/user/addCustomStringsToUser";
+	$apiEndpoint = "https://api-a.edmdesigner.com";
+
+	$getTokenUrl = $apiEndpoint . "/api/token";
+	$addCustomStringsUrl = $apiEndpoint . "/json/user/addCustomStrings";
+	$addCustomStringsToUserUrl = $apiEndpoint . "/json/user/addCustomStringsToUser";
 
 	// handshake
 	$ip = $_SERVER["REMOTE_ADDR"];

@@ -1,9 +1,9 @@
 <?php
-	$publicId = "--> your api key <--";
-	$magic = "--> your magic word <--";
-	$user = 'admin';
+	$publicId = "YOUR-API-KEY";
+	$magic = "your-magic-word";
+	$user = "admin";
 
-	$apiUrl = "--> The api url <--";
+	$apiUrl = "https://api-a.edmdesigner.com";
 	$getTokenUrl = $apiUrl."/api/token";
 	$listUsersUrl = $apiUrl."/json/user/list";
 	$listGroupsUrl = $apiUrl."/json/groups/list";
